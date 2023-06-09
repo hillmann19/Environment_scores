@@ -4,13 +4,8 @@ library(data.table)
 ##pull address
 
 fs <- read.csv("/Users/hillmann/Projects/Geocoding/Data/July2022/BBL_repo/fullscreen.csv")
-
-
 fs$DOSCREEN<-as.Date(as.character(fs$DOSCREEN),"%d-%b-%y")
-
 visit <- read.csv("/Users/hillmann/Projects/Geocoding/Data/July2022/BBL_repo/subjectvisitsall.csv")
-#visit <- read_csv('/Users/hillmann/Projects/Geocoding/Data/oracle/subjectvisitsall.csv')
-
 visit$DOVISIT<-as.Date(as.character(visit$DOVISIT),"%d-%b-%y")
 visit$bblid_date<-paste0(visit$BBLID,"_",visit$DOVISIT)
 
@@ -80,5 +75,5 @@ final_datap<-final_datap[!(is.na(final_datap$PERM_ADDRESS) | final_datap$PERM_AD
 final_datac2 <- distinct(final_datac, bblid_date, CURRENT_ADDRESS, .keep_all= TRUE)
 final_datap2 <- distinct(final_datap, bblid_date, PERM_ADDRESS, .keep_all= TRUE)
 
-write_csv(final_datac2,file="/Users/hillmann/Projects/Geocoding/Data/Aug2022/current_address_all_protocols_082022.csv")
-write_csv(final_datap2,file="/Users/hillmann/Projects/Geocoding/Data/Aug2022/perm_address_all_protocols_082022.csv")
+write_csv(final_datac2,file="/Users/hillmann/Projects/Geocoding/Data/Dec2022/perm_address_all_protocols_12_15_2022.csv")
+write_csv(final_datap2,file="/Users/hillmann/Projects/Geocoding/Data/Dec2022/perm_address_all_protocols_12_15_2022.csv")
