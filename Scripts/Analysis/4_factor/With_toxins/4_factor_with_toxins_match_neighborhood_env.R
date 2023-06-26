@@ -83,10 +83,10 @@ diag_trim <- diag %>%
 #match_date_col <- 'test_sessions_v.dotest'
 #date_diff_col <- 'CNB_env_date_diff'
 
-
 match_data <- function(input_df,match_df,input_date_col,match_date_col,date_diff_col,allow_duplicates = FALSE){
-  input_bblid <- unique(input_df$bblid)
+  input_bblid <- unique(input_df$bblid) # get bblid from input data set
   
+  # If the bblid in input_df isn't in the match_df, create "match" of all NAs
   if(!(input_bblid %in% match_df$bblid)){
     empty_match <- match_df %>% 
       slice_head(n = 1) %>% 
@@ -105,8 +105,10 @@ match_data <- function(input_df,match_df,input_date_col,match_date_col,date_diff
     match_avail <- match_df_trim
     input_df_avail <- input_df
     
+    # Loop through rows of input_df until all have been matched
     while(nrow(input_df_avail) > 0){
   
+      # If there aren't any rows available to match, create an "NA" match for the first row in input_df_avail
       if(nrow(match_avail) == 0){
         matched_df <- input_df_avail %>% 
           slice_head(n = 1)
@@ -115,10 +117,13 @@ match_data <- function(input_df,match_df,input_date_col,match_date_col,date_diff
           slice(-1)
       } else{
         
+        # Calculate the pairwise difference in time for all dates present in input_df_avail and match_avail
         diff_mat <- abs(sapply(input_df_avail[[input_date_col]],'-',match_avail[[match_date_col]]))
+        # If there's only one row in match_avail, the difference matrix has to be transposed
         if(nrow(match_avail) == 1){
           diff_mat <- t(as.matrix(diff_mat))
         }
+        # Find the rows in input_df_avail and match_avail that have the smallest difference in dates and match them
         best_match_loc <- as.vector(which(diff_mat == min(diff_mat),arr.ind = TRUE)[1,])
         matched_df <- bind_cols(input_df_avail %>% slice(best_match_loc[2]),
                                 match_avail %>% select(-bblid) %>% slice(best_match_loc[1])) 
@@ -256,5 +261,3 @@ final_clean2 <- final_clean %>%
 write_csv(final_clean2,file = '/Users/hillmann/Projects/Geocoding/Data/Feb2023/Neighborhood_env_all_matched_clean_02_17_2023.csv')
 
 
-test %>% 
-  filter(bblid %in% ids)
