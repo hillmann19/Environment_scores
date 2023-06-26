@@ -151,7 +151,7 @@ env_list <- env_perm_trim %>%
 
 cnb_env <- map_dfr(env_list,match_data,match_df = cnb_trim,input_date_col = 'date_perm_address',match_date_col = "test_sessions_v.dotest",date_diff_col = "CNB_env_date_diff")
 
-# Remove any CNBs that weren't within a year of the clinical assessment
+# Remove any CNBs that weren't within a year of the address submission
 
 cnb_env_clean <- cnb_env %>% 
   mutate(across(.cols = platform:last_col(),.fns = ~ ifelse(abs(CNB_env_date_diff) < 365.25,.x,NA))) %>% 
@@ -189,7 +189,7 @@ cnb_env_clean <- cnb_env_clean %>%
   mutate(sm_speed_z = as.numeric(scale(mpraxis_rtcr))) %>% 
   mutate(across(.cols = matches('_speed_z$'),.fns = ~ -1*.x))
 
-# Map sips data to individual SES and CNB 
+# Map sips data to the neighborhood environment and CNB data set 
 
 cnb_env_clean_list <- cnb_env_clean %>% 
   group_split(bblid)
@@ -202,7 +202,7 @@ env_cnb_sips_clean <- env_cnb_sips %>%
   mutate(DOSIPS = as.Date(ifelse(abs(SIPS_env_date_diff) < 365.25,DOSIPS,NA),origin = "1970-01-01")) %>% 
   relocate(SIPS_env_date_diff,.after = DOSIPS) 
 
-# Map diagnosis data to individual SES, CNB, and SIPS
+# Map diagnosis data to neighborhood environment, CNB, and SIPS
 
 env_cnb_sips_list <- env_cnb_sips_clean %>% 
   group_split(bblid)
